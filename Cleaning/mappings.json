@@ -1,0 +1,24 @@
+{
+  "bicarbonate": "bicarbonate_arterial__last__last_12h",
+  "PTT": "activated_partial_thromboplastin_time__last__last_12h",
+
+  "temperature": "temperature__mean__last_12h",
+
+  "hemoglobin": "hemoglobin__last__last_12h",
+  "heart_rate": "heart_rate__mean__last_12h",
+  "arterial_blood_pressure": "arterial_blood_pressure_mean__mean__last_12h",
+
+  "creatinine": "creatinine__last__last_12h",
+  "blood_urea_nitrogen": "ureum__last__last_12h",
+  "urine_output": "fluid_out_urine__mean__last_12h",
+  "lactate": "lactate__last__last_12h",
+
+  "glasgow_coma_score": "glasgow_coma_scale_total__last__last_12h",
+
+  "paCO2": "pco2_arterial__mean__last_12h",
+  "respiratory_rate": "respiratory_rate_measured__mean__last_12h",
+  "oxygen_saturation": "o2_saturation__mean__last_12h",
+  "FiO2": "o2_flow__last__last_12h",
+  "paO2": "po2_arterial__mean__last_12h",
+  "ventilator_mode": "vent_mode__last__last_12h"  
+}
