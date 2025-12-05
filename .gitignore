@@ -1,1 +1,4 @@
 Dataset/
+Analysis/*.pdf
+Analysis/*.csv
+Cleaning/*.csv
