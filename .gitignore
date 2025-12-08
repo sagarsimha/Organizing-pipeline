@@ -2,3 +2,4 @@ Dataset/
 Analysis/*.pdf
 Analysis/*.csv
 Cleaning/*.csv
+Analysis/results/
