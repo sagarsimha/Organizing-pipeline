@@ -1,0 +1,213 @@
+# Safe
+def dynamic_safe(new_df, pool, int_var, time_name, t):
+    new_df.loc[new_df[time_name] == t, int_var] = 0
+    # Safe discharge: patients are very stable and ready for ICU discharge
+    condition_safe = safe_discharge_mask = (
+                        # 1) Ventilation status
+                        #    Safe: not invasively ventilated; "unknown" here is your non-invasive / no-vent bucket
+                        (new_df['vent_mode__last__last_12h'].isin(['unknown'])) &
+                        # Stable mode for some hours (no recent changes)
+                        (new_df['vent_mode__hours_since_last__last_12h'] >= 4.0) &
+                    
+                        # 2) Gas exchange
+                        # pCO2 in acceptable range (avoid severe hypo-/hypercapnia)
+                        (new_df['pco2_arterial__mean__last_12h'].between(30.0, 55.0)) &
+                        # pO2 not too low, not extreme hyperoxia
+                        (new_df['po2_arterial__mean__last_12h'].between(60.0, 200.0)) &
+                        # O2 flow ~ surrogate for FiO2 in % (from your 7–87 range, median ~40)
+                        # Require relatively low support
+                        (new_df['o2_flow__last__last_12h'] <= 50.0) &
+                        # SpO2 in normal/safe range
+                        (new_df['o2_saturation__mean__last_12h'].between(92.0, 100.0)) &
+                    
+                        # 3) Respiratory effort
+                        (new_df['respiratory_rate_measured__mean__last_12h'].between(10.0, 24.0)) &
+                    
+                        # 4) Neurologic status
+                        # GCS close to normal; allow mild impairment
+                        (new_df['glasgow_coma_scale_total__last__last_12h'] >= 13.0) &
+                    
+                        # 5) Perfusion / metabolism
+                        # Low lactate (median 1.6; upper bound at discharge 8.1)
+                        (new_df['lactate__last__last_12h'] <= 2.0) &
+                        # Reasonable urine output over last 12h (your median ~112 mL; min 0)
+                        # Here we set a conservative lower bound
+                        (new_df['fluid_out_urine__mean__last_12h'] >= 50.0) &
+                    
+                        # 6) Renal function
+                        # Urea and creatinine can be high in CKD, but for a "safe ICU discharge" rule
+                        # we use fairly conservative upper limits
+                        (new_df['ureum__last__last_12h'] <= 25.0) &
+                        (new_df['creatinine__last__last_12h'] <= 200.0) &
+                    
+                        # 7) Hemodynamics
+                        # Mean arterial pressure in a reasonable range
+                        (new_df['arterial_blood_pressure_mean__mean__last_12h'].between(65.0, 110.0)) &
+                        # Heart rate in a safe band
+                        (new_df['heart_rate__mean__last_12h'].between(50.0, 110.0)) &
+                    
+                        # 8) Hemoglobin
+                        # Permissive anemia; many ICUs accept discharge if Hb >= ~7–8 g/dL
+                        (new_df['hemoglobin__last__last_12h'] >= 7.5) &
+                    
+                        # 9) Temperature
+                        # Afebrile or only mildly febrile
+                        (new_df['temperature__mean__last_12h'].between(36.0, 38.0)) &
+                    
+                        # 10) Coagulation
+                        # Avoid very deranged aPTT; allow some elevation
+                        (new_df['activated_partial_thromboplastin_time__last__last_12h'].between(22.0, 60.0)) &
+                    
+                        # 11) Acid–base
+                        # Bicarbonate around normal / mildly disturbed
+                        (new_df['bicarbonate_arterial__last__last_12h'].between(20.0, 30.0))
+                    )
+    new_df.loc[condition_safe, int_var] = 1
+
+
+#############################################################################################################################
+# Risky
+def dynamic_risky(new_df, pool, int_var, time_name, t):
+    new_df.loc[new_df[time_name] == t, int_var] = 0
+    # Risky discharge: patients are borderline stable; these values are acceptable but less optimal.
+    condition_risky = (
+        # Ventilation: may include patients who are off ventilation or just recently removed.
+        (new_df['vent_mode__last__last_12h'].isin(['unknown', 'invasive_assisted', 'invasive_controlled'])) &  # includes those with recent ventilation
+        # Ventilation time: shorter period since stopping ventilation.
+        (new_df['vent_mode__hours_since_last__last_12h'].between(4.0, 8.0)) &  # shorter duration off support may be less stable
+        # pCO2: mildly elevated values may be tolerated.
+        (new_df['pco2_arterial__mean__last_12h'].between(35.0, 50.0)) &  # slight hypercapnia is borderline acceptable
+        # pO2: acceptable oxygenation but with a wider range.
+        (new_df['po2_arterial__mean__last_12h'].between(60.0, 350.0)) &  # lower bound decreased, upper bound increased for moderate risk
+        # Oxygen flow: moderate oxygen needs.
+        (new_df['o2_flow__last__last_12h'].between(30, 40)) &  # some supplemental oxygen required
+        # O2 saturation: slightly lower saturation.
+        (new_df['o2_saturation__mean__last_12h'].between(90.0, 95.0)) &  # lower saturation suggests borderline respiratory reserve
+        # Respiratory rate: slightly elevated or depressed.
+        (new_df['respiratory_rate_measured__mean__last_12h'].between(20.0, 24.0)) &  # elevated rate indicates possible distress
+        # Neurological status: moderately impaired.
+        (new_df['glasgow_coma_scale_total__last__last_12h'].between(10.0, 13.0)) &  # lower GCS indicates reduced responsiveness
+        # Lactate: modestly elevated, hinting at some metabolic stress.
+        (new_df['lactate__last__last_12h'].between(2.0, 4.0)) &  # intermediate lactate levels are concerning
+        # Urine output: lower output may indicate early kidney stress.
+        (new_df['fluid_out_urine__mean__last_12h'].between(10, 30)) &  # reduced urine output is less reassuring
+        # Ureum: moderately high values.
+        (new_df['ureum__last__last_12h'].between(40.0, 80.0)) &  # higher ureum levels suggest borderline renal function
+        # Creatinine: borderline elevated.
+        (new_df['creatinine__last__last_12h'].between(150, 250)) &  # creatinine in a moderate risk range
+        # Mean arterial blood pressure: on the lower side.
+        (new_df['arterial_blood_pressure_mean__mean__last_12h'].between(60.0, 70.0)) &  # lower blood pressure may be less secure
+        # Heart rate: modest tachycardia.
+        (new_df['heart_rate__mean__last_12h'].between(100.0, 120.0)) &  # elevated heart rate indicates stress
+        # Hemoglobin: borderline low levels.
+        (new_df['hemoglobin__last__last_12h'].between(8.0, 10.0)) &  # lower hemoglobin suggests less reserve
+        # Temperature: slight hypothermia or fever.
+        (new_df['temperature__mean__last_12h'].between(35.0, 36.0)) | (new_df['temperature__mean__last_12h'].between(37.5, 38.0)) &  # mild deviation from normothermia
+        # APTT: slightly prolonged clotting time.
+        (new_df['activated_partial_thromboplastin_time__last__last_12h'].between(40.0, 60.0)) &  # borderline clotting abnormality
+        # Bicarbonate: mild acid–base imbalance.
+        (new_df['bicarbonate_arterial__last__last_12h'].between(18.0, 22.0))    # a lower bicarbonate suggests mild acidosis
+    )
+    new_df.loc[condition_risky, int_var] = 1
+
+# Dangerous
+def dynamic_dangerous(new_df, pool, int_var, time_name, t):
+    new_df.loc[new_df[time_name] == t, int_var] = 0
+    # Dangerous discharge: patients are unstable, and their current parameters predict high 7-day mortality risk if discharged
+    condition_dangerous = (
+        # Ventilation: patients still requiring mechanical ventilation.
+        (new_df['vent_mode__last__last_12h'].isin(['invasive_assisted', 'invasive_controlled'])) &  # active ventilation is a red flag
+        # Ventilation time: very short duration since ventilation removal (if any).
+        (new_df['vent_mode__hours_since_last__last_12h'].between(0.0, 4.0)) &  # minimal time off ventilatory support is dangerous
+        # pCO2: values outside the normal window.
+        ((new_df['pco2_arterial__mean__last_12h'] < 30.0) | (new_df['pco2_arterial__mean__last_12h'] > 50.0)) &  # marked derangements in pCO2
+        # pO2: critically low oxygenation or excessive levels that may indicate oxygen toxicity.
+        ((new_df['po2_arterial__mean__last_12h'] < 60.0) | (new_df['po2_arterial__mean__last_12h'] > 400.0)) &  # dangerous oxygenation levels
+        # Oxygen flow: high oxygen supplementation requirement.
+        (new_df['o2_flow__last__last_12h'] > 40) &  # high flow rates indicate significant respiratory compromise
+        # O2 saturation: dangerously low saturations.
+        (new_df['o2_saturation__mean__last_12h'] < 90.0) &  # saturation below 90% is worrisome
+        # Respiratory rate: extremes of breathing rate.
+        ((new_df['respiratory_rate_measured__mean__last_12h'] < 10.0) | (new_df['respiratory_rate_measured__mean__last_12h'] > 24.0)) &  # abnormal respiratory rate indicates high risk
+        # Neurological status: significant depression in consciousness.
+        (new_df['glasgow_coma_scale_total__last__last_12h'] < 10.0) &  # very low GCS is highly concerning
+        # Lactate: high levels reflect tissue hypoperfusion.
+        (new_df['lactate__last__last_12h'] > 4.0) &  # markedly elevated lactate suggests shock
+        # Urine output: very low output raises concern for renal failure.
+        ((new_df['fluid_out_urine__mean__last_12h'] < 10) | (new_df['fluid_out_urine__mean__last_12h'] > 300)) &  # very low urine output is dangerous
+        # Ureum: high values imply severe renal dysfunction.
+        (new_df['ureum__last__last_12h'] > 80.0) &  # high ureum levels are red flags for renal impairment
+        # Creatinine: high creatinine indicates poor kidney function.
+        (new_df['creatinine__last__last_12h'] > 250) &  # creatinine above 2.5 signals significant renal compromise
+        # Mean arterial blood pressure: values too low or too high compromise perfusion.
+        ((new_df['arterial_blood_pressure_mean__mean__last_12h'] < 60.0) | (new_df['arterial_blood_pressure_mean__mean__last_12h'] > 140.0)) &  # abnormal blood pressure is dangerous
+        # Heart rate: excessive tachycardia or bradycardia.
+        ((new_df['heart_rate__mean__last_12h'] < 60.0) | (new_df['heart_rate__mean__last_12h'] > 120.0)) &  # heart rate outside normal limits increases risk
+        # Hemoglobin: too low levels may result in poor oxygen delivery.
+        (new_df['hemoglobin__last__last_12h'] < 8.0) &  # very low hemoglobin is concerning
+        # Temperature: significant hypothermia or fever.
+        ((new_df['temperature__mean__last_12h'] < 35.0) | (new_df['temperature__mean__last_12h'] > 38.0)) &  # marked temperature derangement is a risk factor
+        # APTT: significantly prolonged clotting times.
+        (new_df['activated_partial_thromboplastin_time__last__last_12h'] > 60.0) &  # high APTT suggests coagulopathy
+        # Bicarbonate: severe acid–base imbalance.
+        ((new_df['bicarbonate_arterial__last__last_12h'] < 18.0) | (new_df['bicarbonate_arterial__last__last_12h'] > 30.0))   # extremes in bicarbonate reflect dangerous acid–base status
+    )
+    new_df.loc[condition_dangerous, int_var] = 1
+
+
+def super_dynamic_dangerous(new_df, pool, int_var, time_name, t):
+    new_df.loc[new_df[time_name] == t, int_var] = 0
+    condition_extremely_dangerous = (
+        (new_df['glasgow_coma_scale_total__last__last_12h'] <= 6) &  # deep coma or no meaningful response
+        (new_df['lactate__last__last_12h'] >= 6.0)  # severe lactic acidosis, reflects profound shock
+    )
+    new_df.loc[condition_extremely_dangerous, int_var] = 1
+
+##########################################################################################################################################################
+
+def dynamic_intervention(new_df, pool, int_var, time_name, t):
+    new_df.loc[new_df[time_name] == t, int_var] = 0
+    new_df.loc[new_df['glasgow_coma_scale_total__last__last_12h'] < 5, int_var] = 1
+
+# Natural course for test
+def dynamic_NC(new_df, pool, int_var, time_name, t):
+    new_df.loc[new_df[time_name] == t, int_var] = 0
+    # Set int_var = 1 if all variables are within their respective observed ranges
+    condition = (
+        (new_df['vent_mode__last__last_12h'].isin(['missing', 'invasive_assisted', 'invasive_controlled', 'niv_unknown', 'niv_assisted'])) &
+        (new_df['vent_mode__hours_since_last__last_12h'].between(0.0, 12.0)) &
+        (new_df['pco2_arterial__mean__last_12h'].between(15.49, 86.0)) &
+        (new_df['po2_arterial__mean__last_12h'].between(16.0, 463.83)) &
+        (new_df['o2_flow__last__last_12h'].between(0.0, 38.63)) &
+        (new_df['o2_saturation__mean__last_12h'].between(86.10, 100.0)) &
+        (new_df['respiratory_rate_measured__mean__last_12h'].between(8.23, 32.94)) &
+        (new_df['glasgow_coma_scale_total__last__last_12h'].between(3.0, 15.0)) &
+        (new_df['lactate__last__last_12h'].between(0.2, 20.17)) &
+        (new_df['fluid_out_urine__mean__last_12h'].between(0.0, 28631.58)) &
+        (new_df['ureum__last__last_12h'].between(1.0, 156.84)) &
+        (new_df['creatinine__last__last_12h'].between(0.0, 10.0)) &
+        (new_df['arterial_blood_pressure_mean__mean__last_12h'].between(34.32, 166.71)) &
+        (new_df['heart_rate__mean__last_12h'].between(40.01, 137.99)) &
+        (new_df['hemoglobin__last__last_12h'].between(5.38, 18.16)) &
+        (new_df['temperature__mean__last_12h'].between(34.48, 38.83)) &
+        (new_df['activated_partial_thromboplastin_time__last__last_12h'].between(15.9, 128.46)) &
+        (new_df['bicarbonate_arterial__last__last_12h'].between(10.04, 46.77))
+    )
+    new_df.loc[condition, int_var] = 1
+
+##########################################################################################################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,40 @@
+def dynamic_discharge_aggressive_v3(new_df, pool, int_var, time_name, t):
+    # Default: discharge
+    new_df.loc[new_df[time_name] == t, int_var] = 1
+
+    # ICU-only RED FLAGS. Anything not here is assumed manageable outside ICU 
+    red_flags = (
+        # 1) Invasive controlled ventilation
+        (new_df['vent_mode__last__last_12h'] == 'invasive_controlled') |
+
+        # 2) Severe oxygenation support
+        (new_df['o2_saturation__mean__last_12h'] < 85.0) |
+        (new_df['o2_flow__last__last_12h'] > 85.0) |
+
+        # 3) Schock severe instability
+        (new_df['arterial_blood_pressure_mean__mean__last_12h'] < 50.0) |
+        (new_df['lactate__last__last_12h'] > 6.0) |
+        (new_df['heart_rate__mean__last_12h'] > 160.0) |
+
+        # 4) Deep coma only
+        (new_df['glasgow_coma_scale_total__last__last_12h'] < 6.0) |
+
+        # 5) Worse acid–base
+        (new_df['bicarbonate_arterial__last__last_12h'] < 10.0)
+    )
+
+    # Only block unknown if physiology suggests ICU-level respiratory failure.
+    unknown_vent_extreme = (
+        (new_df['vent_mode__last__last_12h'] == 'unknown') &
+        (
+            (new_df['o2_saturation__mean__last_12h'] < 85.0) |
+            (new_df['o2_flow__last__last_12h'] > 85.0) |
+            (new_df['pco2_arterial__mean__last_12h'] > 80.0) |
+            (new_df['respiratory_rate_measured__mean__last_12h'] > 45.0)
+        )
+    )
+
+    # Keep in icu if any of the red flags or params under unknown ventilation is extreme
+    keep_in_icu = red_flags | unknown_vent_extreme
+
+    new_df.loc[keep_in_icu, int_var] = 0
