@@ -3,3 +3,6 @@ Analysis/*.pdf
 Analysis/*.csv
 Cleaning/*.csv
 Analysis/results/
+Analysis/*.parquet
+Analysis/archive/
+Analysis/exploration_notebooks
