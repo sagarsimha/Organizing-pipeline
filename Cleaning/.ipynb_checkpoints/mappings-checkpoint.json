@@ -18,7 +18,7 @@
   "paCO2": "pco2_arterial__mean__last_12h",
   "respiratory_rate": "respiratory_rate_measured__mean__last_12h",
   "oxygen_saturation": "o2_saturation__mean__last_12h",
-  "FiO2": "o2_flow__last__last_12h",
+  "FiO2": "fio2__last__last_12h",
   "paO2": "po2_arterial__mean__last_12h",
   "ventilator_mode": "vent_mode__last__last_12h"  
 }
