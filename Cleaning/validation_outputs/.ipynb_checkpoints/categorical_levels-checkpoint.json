@@ -1,0 +1,25 @@
+{
+  "glasgow_coma_scale_total__last__last_12h": {
+    "normal": 219995,
+    "moderate": 134328,
+    "severe": 113886,
+    "mild_impaired": 82762,
+    "nan": 6925
+  },
+  "fio2__last__last_12h": {
+    "nan": 253064,
+    "31_40": 143503,
+    "41_50": 81107,
+    "21_30": 30555,
+    "51_60": 19961,
+    "61_80": 16646,
+    "81_100": 13060
+  },
+  "vent_mode__last__last_12h": {
+    "unknown": 421232,
+    "invasive_assisted": 80432,
+    "invasive_controlled": 55399,
+    "niv_assisted": 772,
+    "cancelled": 61
+  }
+}

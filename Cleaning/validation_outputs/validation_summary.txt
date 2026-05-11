@@ -1,0 +1,28 @@
+Validation summary -- 2026-05-11T23:49:55
+Parquet: ../Dataset/mimic-iv/from_pipeline/ltm_grided_clipped_A_D_Z_Y_SelfPipeline.parquet
+Rows: 557,896, Stays: 81,736
+
+Total tests: 46
+Passed:      44
+Failed:      2
+
+Per-category breakdown:
+                  sum  count
+category                    
+A.Schema            9      9
+B.Grid              5      5
+C.Cohort            3      3
+D.Leakage           3      3
+E.Encoding          9      9
+F.Consistency       8      8
+G.Distributional    7      9
+
+FAILED TESTS:
+  [G.Distributional/G4] L-column missingness recorded; flag >50% missing
+     violations: 5 / nan
+     details: Columns with >50% missing: ['vent_mode__hours_since_last__last_12h', 'lactate__last__last_12h', 'po2_arterial__mean__last_12h', 'pco2_arterial__mean__last_12h', 'activated_partial_thromboplastin_time__last__last_12h']. Saved missingness_overall.csv, missingness_by_t.csv.
+
+  [G.Distributional/G5] Numeric confounders within plausible clinical ranges
+     violations: 1 / nan
+     details: 1 columns out of range; see implausible_values.csv
+

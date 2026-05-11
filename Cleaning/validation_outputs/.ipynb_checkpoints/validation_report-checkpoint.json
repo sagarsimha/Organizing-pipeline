@@ -1,0 +1,647 @@
+[
+  {
+    "category":"A.Schema",
+    "test_id":"A1",
+    "description":"All required columns present",
+    "passed":true,
+    "n_violations":0,
+    "n_total_checked":null,
+    "violation_rate":null,
+    "details":"OK",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"A.Schema",
+    "test_id":"A2",
+    "description":"(stay_id, t) is a unique key",
+    "passed":true,
+    "n_violations":0,
+    "n_total_checked":557896.0,
+    "violation_rate":0.0,
+    "details":"",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"A.Schema",
+    "test_id":"A2b",
+    "description":"(stay_id, k) is a unique key",
+    "passed":true,
+    "n_violations":0,
+    "n_total_checked":557896.0,
+    "violation_rate":0.0,
+    "details":"",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"A.Schema",
+    "test_id":"A3",
+    "description":"No NaN in stay_id, t, k, grid_end, intime, outtime, los",
+    "passed":true,
+    "n_violations":0,
+    "n_total_checked":null,
+    "violation_rate":null,
+    "details":"{'stay_id': 0, 't': 0, 'k': 0, 'grid_end': 0, 'intime': 0, 'outtime': 0, 'los': 0}",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"A.Schema",
+    "test_id":"A4",
+    "description":"t in [0, 59] and k in [1, 60]",
+    "passed":true,
+    "n_violations":0,
+    "n_total_checked":557896.0,
+    "violation_rate":0.0,
+    "details":"t: [0, 59]; k: [1, 60]",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"A.Schema",
+    "test_id":"A4b",
+    "description":"k == t + 1 for every row",
+    "passed":true,
+    "n_violations":0,
+    "n_total_checked":557896.0,
+    "violation_rate":0.0,
+    "details":"unique(k - t): [np.int64(1)]",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"A.Schema",
+    "test_id":"A5",
+    "description":"A in {0,1}; D, Z, Y in {0, 1, NaN}",
+    "passed":true,
+    "n_violations":0,
+    "n_total_checked":null,
+    "violation_rate":null,
+    "details":"{}",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"A.Schema",
+    "test_id":"A6",
+    "description":"A is never NaN",
+    "passed":true,
+    "n_violations":0,
+    "n_total_checked":557896.0,
+    "violation_rate":0.0,
+    "details":"",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"A.Schema",
+    "test_id":"A7",
+    "description":"Column dtypes match expectations",
+    "passed":true,
+    "n_violations":0,
+    "n_total_checked":null,
+    "violation_rate":null,
+    "details":"All match",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"B.Grid",
+    "test_id":"B1",
+    "description":"Per-stay t is contiguous starting at 0",
+    "passed":true,
+    "n_violations":0,
+    "n_total_checked":81736.0,
+    "violation_rate":0.0,
+    "details":"",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"B.Grid",
+    "test_id":"B2",
+    "description":"grid_end_h == (t+1) * 12 == k * 12",
+    "passed":true,
+    "n_violations":0,
+    "n_total_checked":1115792.0,
+    "violation_rate":0.0,
+    "details":"",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"B.Grid",
+    "test_id":"B3",
+    "description":"Per-stay row count = min(floor((los-5)\/12), T_MAX+1)",
+    "passed":true,
+    "n_violations":0,
+    "n_total_checked":81736.0,
+    "violation_rate":0.0,
+    "details":"Mismatches indicate gridding-rule drift.",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"B.Grid",
+    "test_id":"B4",
+    "description":"grid_end strictly increasing within each stay",
+    "passed":true,
+    "n_violations":0,
+    "n_total_checked":81736.0,
+    "violation_rate":0.0,
+    "details":"",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"B.Grid",
+    "test_id":"B5",
+    "description":"max grid_end == 720h",
+    "passed":true,
+    "n_violations":0,
+    "n_total_checked":null,
+    "violation_rate":null,
+    "details":"observed max grid_end_h = 720.0",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"C.Cohort",
+    "test_id":"C1",
+    "description":"los >= 17h for every stay",
+    "passed":true,
+    "n_violations":0,
+    "n_total_checked":81736.0,
+    "violation_rate":0.0,
+    "details":"min observed los: 17.00h",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"C.Cohort",
+    "test_id":"C2",
+    "description":"No death before tau_0 (12h since intime)",
+    "passed":true,
+    "n_violations":0,
+    "n_total_checked":31908.0,
+    "violation_rate":0.0,
+    "details":"If non-empty: 3_organize eligibility filter regressed.",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"C.Cohort",
+    "test_id":"C3",
+    "description":"Baseline columns constant within stay",
+    "passed":true,
+    "n_violations":0,
+    "n_total_checked":null,
+    "violation_rate":null,
+    "details":"All constant",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"D.Leakage",
+    "test_id":"D1",
+    "description":"Non-admin stays: max grid_end <= los - 5h",
+    "passed":true,
+    "n_violations":0,
+    "n_total_checked":81119.0,
+    "violation_rate":0.0,
+    "details":"",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"D.Leakage",
+    "test_id":"D2",
+    "description":"Admin-cens stays have los >= 725h",
+    "passed":true,
+    "n_violations":0,
+    "n_total_checked":617.0,
+    "violation_rate":0.0,
+    "details":"min los among admin-cens: 737.08h",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"D.Leakage",
+    "test_id":"D3",
+    "description":"Admin-cens stays have max grid_end == 720h",
+    "passed":true,
+    "n_violations":0,
+    "n_total_checked":617.0,
+    "violation_rate":0.0,
+    "details":"",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"E.Encoding",
+    "test_id":"E1",
+    "description":"Non-terminal A == 0",
+    "passed":true,
+    "n_violations":0,
+    "n_total_checked":476160.0,
+    "violation_rate":0.0,
+    "details":"",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"E.Encoding",
+    "test_id":"E2",
+    "description":"Non-terminal D == 0",
+    "passed":true,
+    "n_violations":0,
+    "n_total_checked":476160.0,
+    "violation_rate":0.0,
+    "details":"",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"E.Encoding",
+    "test_id":"E3",
+    "description":"Non-terminal Z is NaN",
+    "passed":true,
+    "n_violations":0,
+    "n_total_checked":476160.0,
+    "violation_rate":0.0,
+    "details":"",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"E.Encoding",
+    "test_id":"E4",
+    "description":"Non-terminal Y is NaN",
+    "passed":true,
+    "n_violations":0,
+    "n_total_checked":476160.0,
+    "violation_rate":0.0,
+    "details":"",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"E.Encoding",
+    "test_id":"E5",
+    "description":"Terminal: D is NaN iff A == 1",
+    "passed":true,
+    "n_violations":0,
+    "n_total_checked":81736.0,
+    "violation_rate":0.0,
+    "details":"",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"E.Encoding",
+    "test_id":"E6",
+    "description":"Terminal: Z is non-NaN iff A == 1",
+    "passed":true,
+    "n_violations":0,
+    "n_total_checked":81736.0,
+    "violation_rate":0.0,
+    "details":"",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"E.Encoding",
+    "test_id":"E7",
+    "description":"Terminal: not (A==1 AND D==1)",
+    "passed":true,
+    "n_violations":0,
+    "n_total_checked":81736.0,
+    "violation_rate":0.0,
+    "details":"",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"E.Encoding",
+    "test_id":"E8",
+    "description":"Terminal Y is exactly determined by (A, D, Z)",
+    "passed":true,
+    "n_violations":0,
+    "n_total_checked":81736.0,
+    "violation_rate":0.0,
+    "details":"",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"E.Encoding",
+    "test_id":"E9",
+    "description":"Terminal cross-tab has only the 4 prescribed combos",
+    "passed":true,
+    "n_violations":0,
+    "n_total_checked":null,
+    "violation_rate":null,
+    "details":"OK",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"F.Consistency",
+    "test_id":"F1",
+    "description":"In-ICU death terminal rows have icu_mortality (derived) == True",
+    "passed":true,
+    "n_violations":0,
+    "n_total_checked":5330.0,
+    "violation_rate":0.0,
+    "details":"",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"F.Consistency",
+    "test_id":"F2",
+    "description":"Discharged terminal rows have icu_mortality (derived) == False",
+    "passed":true,
+    "n_violations":0,
+    "n_total_checked":75789.0,
+    "violation_rate":0.0,
+    "details":"",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"F.Consistency",
+    "test_id":"F3",
+    "description":"Admin-cens stays with death in (tau_0, K]  (informational)",
+    "passed":true,
+    "n_violations":2,
+    "n_total_checked":617.0,
+    "violation_rate":0.0032414911,
+    "details":"Real candidate edge cases: 2 (LOS > K but death before K; encoder classifies as admin-cens). Date-rounding artifacts: 3. Candidates saved to F3_candidates_admin_with_death_in_window.csv. Whether to refine the 5_organize encoder depends on count and impact.",
+    "sample_violating_stay_ids":[
+      "mimic4-39353880",
+      "mimic4-39463279"
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"F.Consistency",
+    "test_id":"F4",
+    "description":"Terminal Z == mortality_after_discharge_30d for discharged stays",
+    "passed":true,
+    "n_violations":0,
+    "n_total_checked":75789.0,
+    "violation_rate":0.0,
+    "details":"",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"F.Consistency",
+    "test_id":"F5",
+    "description":"Label\/derived icu_mortality disagreement (informational)",
+    "passed":true,
+    "n_violations":3232,
+    "n_total_checked":null,
+    "violation_rate":null,
+    "details":"label_only (likely post-discharge in-hospital deaths): 3134; derived_only (likely date-rounded timestamps): 98. Cross-tab saved to label_vs_derived_icu_mortality.csv.",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"F.Consistency",
+    "test_id":"F6",
+    "description":"Deaths in (outtime, K] have terminal Z == 1",
+    "passed":true,
+    "n_violations":0,
+    "n_total_checked":6001.0,
+    "violation_rate":0.0,
+    "details":"",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"F.Consistency",
+    "test_id":"F7",
+    "description":"Deaths after K have terminal Z != 1",
+    "passed":true,
+    "n_violations":0,
+    "n_total_checked":20572.0,
+    "violation_rate":0.0,
+    "details":"",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"F.Consistency",
+    "test_id":"F8",
+    "description":"Y exactly determined by (A, D, Z) \u2014 independent check",
+    "passed":true,
+    "n_violations":0,
+    "n_total_checked":81736.0,
+    "violation_rate":0.0,
+    "details":"",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"G.Distributional",
+    "test_id":"G1",
+    "description":"Mortality\/discharge rates within plausible MIMIC-IV bands",
+    "passed":true,
+    "n_violations":0,
+    "n_total_checked":null,
+    "violation_rate":null,
+    "details":"All within plausible bands",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"G.Distributional",
+    "test_id":"G2",
+    "description":"Terminal t distribution (informational)",
+    "passed":true,
+    "n_violations":0,
+    "n_total_checked":null,
+    "violation_rate":null,
+    "details":"min=0, median=2, mean=5.83, max=59, pct_at_TMAX=0.78%",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"G.Distributional",
+    "test_id":"G3",
+    "description":"Per-t row count >= 100 (sufficient for propensity fitting)",
+    "passed":true,
+    "n_violations":0,
+    "n_total_checked":null,
+    "violation_rate":null,
+    "details":"min n_per_t = 641; per-t counts saved to rows_per_t.csv",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"G.Distributional",
+    "test_id":"G4",
+    "description":"L-column missingness recorded; flag >50% missing",
+    "passed":false,
+    "n_violations":5,
+    "n_total_checked":null,
+    "violation_rate":null,
+    "details":"Columns with >50% missing: ['vent_mode__hours_since_last__last_12h', 'lactate__last__last_12h', 'po2_arterial__mean__last_12h', 'pco2_arterial__mean__last_12h', 'activated_partial_thromboplastin_time__last__last_12h']. Saved missingness_overall.csv, missingness_by_t.csv.",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"G.Distributional",
+    "test_id":"G5",
+    "description":"Numeric confounders within plausible clinical ranges",
+    "passed":false,
+    "n_violations":1,
+    "n_total_checked":null,
+    "violation_rate":null,
+    "details":"1 columns out of range; see implausible_values.csv",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"G.Distributional",
+    "test_id":"G6",
+    "description":"vent_mode__hours_since_last__last_12h in [0, 12]",
+    "passed":true,
+    "n_violations":0,
+    "n_total_checked":136664.0,
+    "violation_rate":0.0,
+    "details":"min=0.00, max=12.00, n_observed=136664",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"G.Distributional",
+    "test_id":"G7",
+    "description":"n_obs_in_window distribution (informational)",
+    "passed":true,
+    "n_violations":0,
+    "n_total_checked":null,
+    "violation_rate":null,
+    "details":"zeros: 0, NaN: 394, min: 1.0, median: 21.0, max: 713.0",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"G.Distributional",
+    "test_id":"G8",
+    "description":"Categorical level counts recorded (informational)",
+    "passed":true,
+    "n_violations":0,
+    "n_total_checked":null,
+    "violation_rate":null,
+    "details":"Saved to validation_outputs\/categorical_levels.json",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  },
+  {
+    "category":"G.Distributional",
+    "test_id":"G9",
+    "description":"In-ICU death timing vs discharge timing (informational)",
+    "passed":true,
+    "n_violations":0,
+    "n_total_checked":null,
+    "violation_rate":null,
+    "details":"median t at in-ICU death = 7.0; median t at discharge = 2.0",
+    "sample_violating_stay_ids":[
+
+    ],
+    "timestamp":"2026-05-11T23:49:55"
+  }
+]

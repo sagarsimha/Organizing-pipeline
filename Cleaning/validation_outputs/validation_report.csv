@@ -1,0 +1,47 @@
+category,test_id,description,passed,n_violations,n_total_checked,violation_rate,details,sample_violating_stay_ids,timestamp
+A.Schema,A1,All required columns present,True,0,,,OK,[],2026-05-11T23:49:55
+A.Schema,A2,"(stay_id, t) is a unique key",True,0,557896.0,0.0,,[],2026-05-11T23:49:55
+A.Schema,A2b,"(stay_id, k) is a unique key",True,0,557896.0,0.0,,[],2026-05-11T23:49:55
+A.Schema,A3,"No NaN in stay_id, t, k, grid_end, intime, outtime, los",True,0,,,"{'stay_id': 0, 't': 0, 'k': 0, 'grid_end': 0, 'intime': 0, 'outtime': 0, 'los': 0}",[],2026-05-11T23:49:55
+A.Schema,A4,"t in [0, 59] and k in [1, 60]",True,0,557896.0,0.0,"t: [0, 59]; k: [1, 60]",[],2026-05-11T23:49:55
+A.Schema,A4b,k == t + 1 for every row,True,0,557896.0,0.0,unique(k - t): [np.int64(1)],[],2026-05-11T23:49:55
+A.Schema,A5,"A in {0,1}; D, Z, Y in {0, 1, NaN}",True,0,,,{},[],2026-05-11T23:49:55
+A.Schema,A6,A is never NaN,True,0,557896.0,0.0,,[],2026-05-11T23:49:55
+A.Schema,A7,Column dtypes match expectations,True,0,,,All match,[],2026-05-11T23:49:55
+B.Grid,B1,Per-stay t is contiguous starting at 0,True,0,81736.0,0.0,,[],2026-05-11T23:49:55
+B.Grid,B2,grid_end_h == (t+1) * 12 == k * 12,True,0,1115792.0,0.0,,[],2026-05-11T23:49:55
+B.Grid,B3,"Per-stay row count = min(floor((los-5)/12), T_MAX+1)",True,0,81736.0,0.0,Mismatches indicate gridding-rule drift.,[],2026-05-11T23:49:55
+B.Grid,B4,grid_end strictly increasing within each stay,True,0,81736.0,0.0,,[],2026-05-11T23:49:55
+B.Grid,B5,max grid_end == 720h,True,0,,,observed max grid_end_h = 720.0,[],2026-05-11T23:49:55
+C.Cohort,C1,los >= 17h for every stay,True,0,81736.0,0.0,min observed los: 17.00h,[],2026-05-11T23:49:55
+C.Cohort,C2,No death before tau_0 (12h since intime),True,0,31908.0,0.0,If non-empty: 3_organize eligibility filter regressed.,[],2026-05-11T23:49:55
+C.Cohort,C3,Baseline columns constant within stay,True,0,,,All constant,[],2026-05-11T23:49:55
+D.Leakage,D1,Non-admin stays: max grid_end <= los - 5h,True,0,81119.0,0.0,,[],2026-05-11T23:49:55
+D.Leakage,D2,Admin-cens stays have los >= 725h,True,0,617.0,0.0,min los among admin-cens: 737.08h,[],2026-05-11T23:49:55
+D.Leakage,D3,Admin-cens stays have max grid_end == 720h,True,0,617.0,0.0,,[],2026-05-11T23:49:55
+E.Encoding,E1,Non-terminal A == 0,True,0,476160.0,0.0,,[],2026-05-11T23:49:55
+E.Encoding,E2,Non-terminal D == 0,True,0,476160.0,0.0,,[],2026-05-11T23:49:55
+E.Encoding,E3,Non-terminal Z is NaN,True,0,476160.0,0.0,,[],2026-05-11T23:49:55
+E.Encoding,E4,Non-terminal Y is NaN,True,0,476160.0,0.0,,[],2026-05-11T23:49:55
+E.Encoding,E5,Terminal: D is NaN iff A == 1,True,0,81736.0,0.0,,[],2026-05-11T23:49:55
+E.Encoding,E6,Terminal: Z is non-NaN iff A == 1,True,0,81736.0,0.0,,[],2026-05-11T23:49:55
+E.Encoding,E7,Terminal: not (A==1 AND D==1),True,0,81736.0,0.0,,[],2026-05-11T23:49:55
+E.Encoding,E8,"Terminal Y is exactly determined by (A, D, Z)",True,0,81736.0,0.0,,[],2026-05-11T23:49:55
+E.Encoding,E9,Terminal cross-tab has only the 4 prescribed combos,True,0,,,OK,[],2026-05-11T23:49:55
+F.Consistency,F1,In-ICU death terminal rows have icu_mortality (derived) == True,True,0,5330.0,0.0,,[],2026-05-11T23:49:55
+F.Consistency,F2,Discharged terminal rows have icu_mortality (derived) == False,True,0,75789.0,0.0,,[],2026-05-11T23:49:55
+F.Consistency,F3,"Admin-cens stays with death in (tau_0, K]  (informational)",True,2,617.0,0.0032414910858995136,Real candidate edge cases: 2 (LOS > K but death before K; encoder classifies as admin-cens). Date-rounding artifacts: 3. Candidates saved to F3_candidates_admin_with_death_in_window.csv. Whether to refine the 5_organize encoder depends on count and impact.,"['mimic4-39353880', 'mimic4-39463279']",2026-05-11T23:49:55
+F.Consistency,F4,Terminal Z == mortality_after_discharge_30d for discharged stays,True,0,75789.0,0.0,,[],2026-05-11T23:49:55
+F.Consistency,F5,Label/derived icu_mortality disagreement (informational),True,3232,,,label_only (likely post-discharge in-hospital deaths): 3134; derived_only (likely date-rounded timestamps): 98. Cross-tab saved to label_vs_derived_icu_mortality.csv.,[],2026-05-11T23:49:55
+F.Consistency,F6,"Deaths in (outtime, K] have terminal Z == 1",True,0,6001.0,0.0,,[],2026-05-11T23:49:55
+F.Consistency,F7,Deaths after K have terminal Z != 1,True,0,20572.0,0.0,,[],2026-05-11T23:49:55
+F.Consistency,F8,"Y exactly determined by (A, D, Z) — independent check",True,0,81736.0,0.0,,[],2026-05-11T23:49:55
+G.Distributional,G1,Mortality/discharge rates within plausible MIMIC-IV bands,True,0,,,All within plausible bands,[],2026-05-11T23:49:55
+G.Distributional,G2,Terminal t distribution (informational),True,0,,,"min=0, median=2, mean=5.83, max=59, pct_at_TMAX=0.78%",[],2026-05-11T23:49:55
+G.Distributional,G3,Per-t row count >= 100 (sufficient for propensity fitting),True,0,,,min n_per_t = 641; per-t counts saved to rows_per_t.csv,[],2026-05-11T23:49:55
+G.Distributional,G4,L-column missingness recorded; flag >50% missing,False,5,,,"Columns with >50% missing: ['vent_mode__hours_since_last__last_12h', 'lactate__last__last_12h', 'po2_arterial__mean__last_12h', 'pco2_arterial__mean__last_12h', 'activated_partial_thromboplastin_time__last__last_12h']. Saved missingness_overall.csv, missingness_by_t.csv.",[],2026-05-11T23:49:55
+G.Distributional,G5,Numeric confounders within plausible clinical ranges,False,1,,,1 columns out of range; see implausible_values.csv,[],2026-05-11T23:49:55
+G.Distributional,G6,"vent_mode__hours_since_last__last_12h in [0, 12]",True,0,136664.0,0.0,"min=0.00, max=12.00, n_observed=136664",[],2026-05-11T23:49:55
+G.Distributional,G7,n_obs_in_window distribution (informational),True,0,,,"zeros: 0, NaN: 394, min: 1.0, median: 21.0, max: 713.0",[],2026-05-11T23:49:55
+G.Distributional,G8,Categorical level counts recorded (informational),True,0,,,Saved to validation_outputs/categorical_levels.json,[],2026-05-11T23:49:55
+G.Distributional,G9,In-ICU death timing vs discharge timing (informational),True,0,,,median t at in-ICU death = 7.0; median t at discharge = 2.0,[],2026-05-11T23:49:55

@@ -1,0 +1,2 @@
+col,n_below,n_above,min,max,plausible_lo,plausible_hi,frac_outside
+pco2_arterial__mean__last_12h,0,27,10.0,147.0,10,120,0.00012555920348961578

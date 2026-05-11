@@ -1,0 +1,6 @@
+stay_id,death_abs,tau_0_time,K_time,death_at_midnight,same_day_as_K,likely_date_rounding
+mimic4-31445489,2174-06-06,2174-05-07 08:41:29,2174-06-06 08:41:29,True,True,True
+mimic4-36173950,2135-10-20,2135-09-20 11:40:00,2135-10-20 11:40:00,True,True,True
+mimic4-39217588,2140-07-04,2140-06-04 08:44:00,2140-07-04 08:44:00,True,True,True
+mimic4-39353880,2170-12-01,2170-11-02 01:38:00,2170-12-02 01:38:00,True,False,False
+mimic4-39463279,2168-09-25,2168-09-01 08:08:44,2168-10-01 08:08:44,True,False,False
