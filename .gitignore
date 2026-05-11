@@ -2,7 +2,11 @@ Dataset/
 Analysis/*.pdf
 Analysis/*.csv
 Cleaning/*.csv
+Cleaning/Misc/
 Analysis/results/
 Analysis/*.parquet
 Analysis/archive/
 Analysis/exploration_notebooks
+Analysis/Model validation/*.csv
+Analysis/Model validation/*.parquet
+Analysis/Model validation/layer1*
